@@ -3,7 +3,8 @@ import pymysql
 import time
 import RPi.GPIO as GPIO
 import sys
-import cv2
+from picamera import PiCamera
+from time import sleep
 sys.path.append('/home/pi/MFRC522-python')
 from mfrc522 import SimpleMFRC522
 
@@ -34,7 +35,7 @@ def check_f(rfid,floor,photo):
         
 reader = SimpleMFRC522()
 
-
+camera = PiCamera()
 
 while(1) :
     
@@ -44,13 +45,15 @@ while(1) :
         id, text = reader.read()
         print(id)
         time.sleep(1)
+
+    
+        camera.brightness = 55
+        camera.image_effect = 'washedout'
+        camera.awb_mode = 'sunlight'
+        sleep(2)
+        camera.capture('image.jpg')
         
-        cam = cv2.VideoCapture(0)
-        ret,image = cam.read()
-        time.sleep(0.5)
-        cv2.imwrite('abc.jpg',image)
-        cam.release()
-        fp = open('abc.jpg','rb')
+        fp = open('image.jpg','rb')
         photo = fp.read()
     
         
